@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Search</title>
+    <link rel="icon" type="image/x-icon" href="images/favicon.ico">
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@2.8.2/dist/alpine.min.js" defer></script>
+</head>
+<body>
+
+    <div x-data="{
+            API_KEY: '', //your pixabay.com key
+            search: '',
+            img: '', 
+            loadImage() { 
+                fetch('https://pixabay.com/api/?key=' + this.API_KEY + '&q=' + encodeURIComponent(this.search) + '&image_type=photo&pretty=true')
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.hits.length > 0) {
+                            this.img = data.hits[0].webformatURL; // Use the URL of the first image in the results
+                        } else {
+                            alert('No images found');
+                        }
+                    })
+                    .catch(error => console.error('Error fetching image:', error));
+            } 
+        }"
+        x-on:submit.prevent="loadImage"
+       
+    >
+        <input type="text" x-model="search">
+        <button x-on:click="loadImage">Load</button>
+        <br/><br/>
+        <img x-bind:src="img" alt="Loaded Image" x-show="img">
+    </div>
+    
+</body>
+</html>
